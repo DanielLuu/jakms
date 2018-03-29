@@ -131,7 +131,7 @@ public class LoginServer implements Runnable, LoginServerMBean {
                         FileReader fileReader = new FileReader(System.getProperty("net.sf.odinms.login.config"));
                         initialProp.load(fileReader);
                         fileReader.close();
-                        REGISTRY_PORT = Integer.parseInt(prop.getProperty("net.sf.odinms.world.port"));
+                        REGISTRY_PORT = Integer.parseInt(initialProp.getProperty("net.sf.odinms.world.port"));
                         Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), REGISTRY_PORT, new SslRMIClientSocketFactory());
                         worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
                         lwi = new LoginWorldInterfaceImpl();
