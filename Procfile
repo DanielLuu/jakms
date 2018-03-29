@@ -1,0 +1,1 @@
+web: ./launch_world.sh
