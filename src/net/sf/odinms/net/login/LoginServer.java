@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class LoginServer implements Runnable, LoginServerMBean {
 
     public static int PORT = 8484;
+    public int REGISTRY_PORT = Registry.REGISTRY_PORT;
     private IoAcceptor acceptor;
     static final Logger log = LoggerFactory.getLogger(LoginServer.class);
     private static WorldRegistry worldRegistry = null;
@@ -130,7 +131,8 @@ public class LoginServer implements Runnable, LoginServerMBean {
                         FileReader fileReader = new FileReader(System.getProperty("net.sf.odinms.login.config"));
                         initialProp.load(fileReader);
                         fileReader.close();
-                        Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
+                        REGISTRY_PORT = Integer.parseInt(prop.getProperty("net.sf.odinms.world.port"));
+                        Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), REGISTRY_PORT, new SslRMIClientSocketFactory());
                         worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
                         lwi = new LoginWorldInterfaceImpl();
                         wli = worldRegistry.registerLoginServer(initialProp.getProperty("net.sf.odinms.login.key"), lwi);
@@ -173,7 +175,8 @@ public class LoginServer implements Runnable, LoginServerMBean {
             FileReader fileReader = new FileReader(System.getProperty("net.sf.odinms.login.config"));
             initialProp.load(fileReader);
             fileReader.close();
-            Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
+            REGISTRY_PORT = Integer.parseInt(initialProp.getProperty("net.sf.odinms.world.port"));
+            Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), REGISTRY_PORT, new SslRMIClientSocketFactory());
             worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
             lwi = new LoginWorldInterfaceImpl();
             wli = worldRegistry.registerLoginServer(initialProp.getProperty("net.sf.odinms.login.key"), lwi);
@@ -211,6 +214,7 @@ public class LoginServer implements Runnable, LoginServerMBean {
         tMan.register(LoginWorker.getInstance(), loginInterval);
         rankingInterval = Long.parseLong(prop.getProperty("net.sf.odinms.login.ranking.interval"));
         PORT = Integer.parseInt(prop.getProperty("net.sf.odinms.login.port"));
+        PORT = System.getenv("PORT") == null ? PORT : Integer.parseInt(System.getenv("PORT"));
         tMan.register(new RankingWorker(), rankingInterval);
         try {
             acceptor.bind(new InetSocketAddress(PORT), new MapleServerHandler(PacketProcessor.getProcessor(PacketProcessor.Mode.LOGINSERVER)), cfg);

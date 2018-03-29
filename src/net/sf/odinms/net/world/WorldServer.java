@@ -87,7 +87,9 @@ public class WorldServer {
 	
 	public static void main(String[] args) {
 		try {
-			Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT, 
+			int port = System.getenv("PORT") == null ? Registry.REGISTRY_PORT : Integer.parseInt(System.getenv("PORT"));
+			System.out.println("Started World Server on " + port);
+			Registry registry = LocateRegistry.createRegistry(port,
 				new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
 			registry.rebind("WorldRegistry", WorldRegistryImpl.getInstance());
 		} catch (RemoteException ex) {
