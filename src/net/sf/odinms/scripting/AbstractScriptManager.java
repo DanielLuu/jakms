@@ -25,14 +25,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.scripting;
 
+import net.sf.odinms.client.MapleClient;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileReader;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import net.sf.odinms.client.MapleClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -65,6 +68,7 @@ public abstract class AbstractScriptManager {
                     c.setScriptEngine(path, engine);
                 }
                 FileReader fr = new FileReader(scriptFile);
+                engine.eval("load('nashorn:mozilla_compat.js');");
                 engine.eval(fr);
                 fr.close();
             }
